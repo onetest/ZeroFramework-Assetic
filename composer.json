@@ -1,20 +1,15 @@
 {
-    "name": "mheap/silex-assetic",
-    "description": "Assetic extension for Silex",
+    "name": "onetest/zeroframework-assetic",
+    "description": "Assetic extension for zeroframework",
     "keywords": ["silex", "assetic"],
-    "homepage": "https://github.com/mheap/Silex-Assetic",
+    "homepage": "https://github.com/onetest/ZeroFramework-Assetic",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
-            "name": "Sven Eisenschmidt",
-            "email": "sven.eisenschmidt@gmail.com",
-            "homepage": "http://unsicherheitsagent.de/"
-        },
-        {
-            "name": "Michael Heap",
-            "email": "m@michaelheap.com",
-            "homepage": "http://michaelheap.com/"
+            "name": "Jean pasqualini",
+            "email": "jpasqualini75@gmail.com",
+            "homepage": "http://fr.viadeo.com/fr/profile/developpeur.symfony2"
         }
     ],
     "require": {
@@ -23,7 +18,6 @@
         "symfony/finder": "~2.1"
     },
     "require-dev": {
-        "silex/silex": "~1.0@dev",
         "twig/twig": "~1.2",
         "phpunit/phpunit": "~3.7.10"
     },
@@ -32,7 +26,7 @@
     },
     "autoload": {
         "psr-0": {
-            "SilexAssetic": "src"
+            "": "src"
         }
     }
 }
