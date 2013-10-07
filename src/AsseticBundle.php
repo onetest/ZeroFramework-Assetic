@@ -9,7 +9,7 @@ use Assetic\Factory\AssetFactory;
 use Assetic\Factory\LazyAssetManager;
 use Assetic\Cache\FilesystemCache;
 use Assetic\Extension\Twig\TwigFormulaLoader;
-use Assetic\Extension\Twig\AsseticExtension;
+
 
 class AsseticBundle
 {
@@ -17,13 +17,22 @@ class AsseticBundle
     {
         $app = $core->getServiceContainer();
 
+        $container = $app;
+
+        // Initialise le parametres services comme un tableau vide s'il n'existe pas sinon fussion un autre tableau à celui déjà existant
+        $services = $core->getConf()->loadConfigurationFile("services", __DIR__.DIRECTORY_SEPARATOR."Resources".DIRECTORY_SEPARATOR."config");
+
+        if(!$container->has("services")) $container->services = array();
+
+        $container->services = array_merge($container->services, $services);
+
         $app['assetic.options'] = array();
-        $app['assetic.path_to_web'] = APP_DIRECTORY.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."web";
 
         /**
          * Asset Factory configuration happens here
          */
         $app['assetic'] = $app->share(function () use ($app) {
+
             $app['assetic.options'] = array_replace(array(
                 'debug'              => isset($app['debug']) ? $app['debug'] : false,
                 'formulae_cache_dir' => null,
@@ -119,36 +128,29 @@ class AsseticBundle
             );
         });
 
-        if (isset($app['twig'])) {
-            $app['twig'] = $app->share(
-                $app->extend('twig', function ($twig, $app) {
-                    $twig->addExtension(new AsseticExtension($app['assetic']));
-
-                    return $twig;
-                })
-            );
-
-            $app['assetic.lazy_asset_manager'] = $app->share(
-                $app->extend('assetic.lazy_asset_manager', function ($am, $app) {
-                    $am->setLoader('twig', new TwigFormulaLoader($app['twig']));
-
-                    return $am;
-                })
-            );
-
-            $app['assetic.dumper'] = $app->share(
-                $app->extend('assetic.dumper', function ($helper, $app) {
-                    $helper->setTwig($app['twig'], $app['twig.loader.filesystem']);
-
-                    return $helper;
-                })
-            );
-        }
-
         $eventManager = $core->getEventManager();
 
         $eventManager->listenEvent("onReady", function($event) use ($app)
         {
+            if (isset($app['twig'])) {
+
+                $app['assetic.lazy_asset_manager'] = $app->share(
+                    $app->extend('assetic.lazy_asset_manager', function ($am, $app) {
+                        $am->setLoader('twig', new TwigFormulaLoader($app['twig']));
+
+                        return $am;
+                    })
+                );
+
+                $app['assetic.dumper'] = $app->share(
+                    $app->extend('assetic.dumper', function ($helper, $app) {
+                        $helper->setTwig($app['twig'], $app['twig.loader.filesystem']);
+
+                        return $helper;
+                    })
+                );
+            }
+
             // Register our filters to use
             if (isset($app['assetic.filters']) && is_callable($app['assetic.filters'])) {
                 $app['assetic.filters']($app['assetic.filter_manager']);
@@ -161,11 +163,13 @@ class AsseticBundle
                 // Boot assetic
                 $assetic = $app['assetic'];
 
-                if (!isset($app['assetic.options']['auto_dump_assets']) ||
-                    !$app['assetic.options']['auto_dump_assets']) {
 
+
+                if (!$app['debug'])
+                {
                     return;
                 }
+
                 $helper = $app['assetic.dumper'];
                 if (isset($app['twig'])) {
                     $helper->addTwigAssets();

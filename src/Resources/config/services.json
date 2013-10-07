@@ -1,0 +1,10 @@
+{
+    "twig.extension.assetic" :
+    {
+        "class" : "Assetic\\Extension\\Twig\\AsseticExtension",
+        "parameters" : ["@assetic"],
+        "tags" : [
+            {"name" : "twig.extension"}
+        ]
+    }
+}
