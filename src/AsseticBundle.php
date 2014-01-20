@@ -13,7 +13,7 @@ use Assetic\Extension\Twig\TwigFormulaLoader;
 
 class AsseticBundle
 {
-    public function register($core)
+    public static function register($core)
     {
         $app = $core->getServiceContainer();
 
