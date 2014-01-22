@@ -1,5 +1,5 @@
 {
-    "name": "onetest/zeroframework-assetic",
+    "name": "zeroframework/zeroframework-assetic",
     "description": "Assetic extension for zeroframework",
     "keywords": ["silex", "assetic"],
     "homepage": "https://github.com/onetest/ZeroFramework-Assetic",
